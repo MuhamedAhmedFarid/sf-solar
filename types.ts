@@ -58,6 +58,8 @@ export interface AgentPerformance {
   number_of_sets?: number;
   meeting_hours?: number;
   break_hours?: number;
+  /** From VICI dialer CSV; persisted to table "set" */
+  set?: string | number;
 }
 
 export interface PaymentBatch {

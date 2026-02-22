@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../supabase';
 import { Layout } from './Layout';
 import { AgentPerformance } from '../types';
+import { todayEST, formatDateEST, getMondayOfWeekEST } from '../utils/dateEST';
 import { 
   Phone, Target, MessageCircle, BarChart3, ListChecks, 
   TrendingUp, Clock, Zap, Calendar, Loader2, 
@@ -18,8 +18,8 @@ export const RepPortal: React.FC<{ rep: any; onLogout: () => void }> = ({ rep, o
   
   // Filtering & Aggregation States
   const [filterMode, setFilterMode] = useState<RepFilterMode>('DAILY');
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(todayEST());
+  const [endDate, setEndDate] = useState(todayEST());
 
   useEffect(() => {
     fetchRepPerformance();
@@ -62,15 +62,10 @@ export const RepPortal: React.FC<{ rep: any; onLogout: () => void }> = ({ rep, o
     return [hrs, mins, secs].map(v => v < 10 ? '0' + v : v).join(':');
   };
 
-  const getStartOfWeek = (dateStr: string) => {
-    const d = new Date(dateStr);
-    const day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff)).toISOString().split('T')[0];
-  };
+  const getStartOfWeek = (dateStr: string) => getMondayOfWeekEST(dateStr);
 
   const getMonthKey = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleString('default', { month: 'long', year: 'numeric' });
+    return formatDateEST(dateStr + 'T12:00:00', { month: 'long', year: 'numeric' });
   };
 
   // 1. First, get the subset of performance records based on current date filters
@@ -289,6 +284,9 @@ export const RepPortal: React.FC<{ rep: any; onLogout: () => void }> = ({ rep, o
                 <th className="px-6 py-6 text-center">Talk Time</th>
                 <th className="px-6 py-6 text-center">Wait Time</th>
                 <th className="px-6 py-6 text-center">Work Time</th>
+                <th className="px-6 py-6 text-center">Zoom Schduled</th>
+                <th className="px-6 py-6 text-center">Meetings</th>
+                <th className="px-6 py-6 text-center">Breaks</th>
                 <th className="px-6 py-6 text-center">Status</th>
                 <th className="px-10 py-6 text-right">Estimated Total</th>
               </tr>
@@ -296,7 +294,7 @@ export const RepPortal: React.FC<{ rep: any; onLogout: () => void }> = ({ rep, o
             <tbody className="divide-y divide-slate-100">
               {aggregatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-10 py-24 text-center">
+                  <td colSpan={10} className="px-10 py-24 text-center">
                     <p className="text-slate-300 font-bold uppercase text-xs tracking-widest">No matching records in selected range</p>
                   </td>
                 </tr>
@@ -324,6 +322,15 @@ export const RepPortal: React.FC<{ rep: any; onLogout: () => void }> = ({ rep, o
                     </td>
                     <td className="px-6 py-6 text-center font-mono text-slate-900 font-black text-sm">
                       {formatDuration(workSec)}
+                    </td>
+                    <td className="px-6 py-6 text-center font-black text-slate-900 text-sm">
+                      {item.number_of_sets ?? 0}
+                    </td>
+                    <td className="px-6 py-6 text-center font-black text-blue-600 text-sm">
+                      {(item.meeting_hours ?? 0)}h
+                    </td>
+                    <td className="px-6 py-6 text-center font-black text-orange-600 text-sm">
+                      {(item.break_hours ?? 0)}h
                     </td>
                     <td className="px-6 py-6 text-center">
                        {item.is_paid ? (

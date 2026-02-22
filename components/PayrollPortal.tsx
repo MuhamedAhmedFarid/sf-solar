@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '../supabase';
 import { Layout } from './Layout';
 import { AgentPerformance, Candidate, ClientData, PaymentBatch } from '../types';
+import { todayEST, formatDateEST } from '../utils/dateEST';
 import { 
   DollarSign, TrendingUp, Calendar, Zap, Download, 
   Filter, User, Clock, Search, ArrowRight, ChevronDown,
@@ -20,8 +20,8 @@ export const PayrollPortal: React.FC<{ onLogout: () => void }> = ({ onLogout }) 
   // View states
   const [viewMode, setViewMode] = useState<'LEDGER' | 'BATCHER'>('LEDGER');
   const [filterMode, setFilterMode] = useState<'DAILY' | 'RANGE' | 'ALL'>('DAILY');
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(todayEST());
+  const [endDate, setEndDate] = useState(todayEST());
   const [searchTerm, setSearchTerm] = useState('');
 
   // Batching Logic States
@@ -193,7 +193,7 @@ export const PayrollPortal: React.FC<{ onLogout: () => void }> = ({ onLogout }) 
     try {
       const selectedRecords = filteredAndAggregatedData.filter(e => selectedEntries.has(e.id));
       const totalAmount = selectedRecords.reduce((sum, r) => sum + r.net_owed, 0);
-      const batchName = `Batch ${new Date().toLocaleDateString()} - ${clients.find(c => c.id === selectedClientId)?.name}`;
+      const batchName = `Batch ${formatDateEST(new Date(), { dateStyle: 'medium' })} - ${clients.find(c => c.id === selectedClientId)?.name}`;
 
       const { data: batchData, error: batchError } = await supabase
         .from('payment_batches')

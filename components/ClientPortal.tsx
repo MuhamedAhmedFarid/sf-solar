@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import { Layout } from './Layout';
 import { Candidate, AgentPerformance, PaymentBatch } from '../types';
+import { formatDateEST } from '../utils/dateEST';
 import { 
   Phone, FileText, Play, Check, X, ShieldAlert, Star, Clock, 
   Briefcase, MessageSquare, Coffee, Filter, Search, DollarSign, 
@@ -128,7 +128,7 @@ export const ClientPortal: React.FC<{ client: any; onLogout: () => void }> = ({ 
           client_id: client.id,
           batch_id: confirmingBatch.id,
           total_amount: confirmingBatch.total_amount,
-          paid_at: new Date().toISOString()
+          paid_at: new Date().toISOString() // stored UTC; displayed in EST
         }]);
 
       if (historyError) {
@@ -363,7 +363,7 @@ export const ClientPortal: React.FC<{ client: any; onLogout: () => void }> = ({ 
                           <span className="font-black text-slate-900 text-sm">{batch.batch_name}</span>
                         </td>
                         <td className="px-6 py-6 text-center text-[10px] font-black text-slate-400 uppercase">
-                          {new Date(batch.created_at).toLocaleDateString()}
+                          {formatDateEST(batch.created_at, { dateStyle: 'medium' })}
                         </td>
                         <td className="px-6 py-6 text-center font-black text-slate-950">
                           ${batch.total_amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -454,7 +454,7 @@ export const ClientPortal: React.FC<{ client: any; onLogout: () => void }> = ({ 
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-3">
                             <CheckCircle2 className="size-4 text-emerald-600" />
-                            <span className="font-black text-slate-900 text-sm">{new Date(hist.paid_at).toLocaleDateString()}</span>
+                            <span className="font-black text-slate-900 text-sm">{formatDateEST(hist.paid_at, { dateStyle: 'medium' })}</span>
                           </div>
                         </td>
                         <td className="px-6 py-6 font-mono text-xs text-slate-400 uppercase tracking-widest">
@@ -478,7 +478,7 @@ export const ClientPortal: React.FC<{ client: any; onLogout: () => void }> = ({ 
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-3">
                             <CheckCircle2 className="size-4 text-emerald-600" />
-                            <span className="font-black text-slate-900 text-sm">{new Date(batch.created_at).toLocaleDateString()}</span>
+                            <span className="font-black text-slate-900 text-sm">{formatDateEST(batch.created_at, { dateStyle: 'medium' })}</span>
                           </div>
                         </td>
                         <td className="px-6 py-6 font-mono text-xs text-slate-400 uppercase tracking-widest">

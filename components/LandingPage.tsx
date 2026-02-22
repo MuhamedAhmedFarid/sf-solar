@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '../types';
-import { Shield, CreditCard, Briefcase, LayoutGrid } from 'lucide-react';
+import { Shield, CreditCard, Briefcase, LayoutGrid, Trophy } from 'lucide-react';
 
 interface RoleCardProps {
   title: string;
@@ -60,9 +60,19 @@ export const LandingPage: React.FC<{ onSelectRole: (role: UserRole) => void }> =
           </p>
         </div>
 
+        {/* Leaderboard - prominent, no login required */}
+        <div className="mb-8">
+          <RoleCard
+            title="Leaderboard"
+            description="Daily rankings and top performers. No login required."
+            icon={<Trophy />}
+            onClick={() => onSelectRole('LEADERBOARD')}
+            className="w-full shadow-lg border-2 border-primary/30 bg-primary/5 hover:border-primary hover:bg-primary/10 hover:shadow-[0_20px_50px_-12px_rgba(233,137,1,0.25)] min-h-[160px]"
+          />
+        </div>
+
         {/* RESTRUCTURED LAYOUT: Staggered Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[140px]">
-         
            <RoleCard 
             title="CEO"
             description="High-level client relations and status overview."
@@ -91,7 +101,6 @@ export const LandingPage: React.FC<{ onSelectRole: (role: UserRole) => void }> =
             onClick={() => onSelectRole('ADMIN')}
             className="md:col-span-7 md:row-span-2 shadow-sm"
           />
-         
         </div>
       </div>
     </div>

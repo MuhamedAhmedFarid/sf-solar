@@ -7,6 +7,7 @@ import { AdminPortal } from './components/AdminPortal';
 import { ClientPortal } from './components/ClientPortal';
 import { PayrollPortal } from './components/PayrollPortal';
 import { RepPortal } from './components/RepPortal';
+import { LeadBoardPage } from './components/LeadBoardPage';
 import { UserRole, AuthState } from './types';
 
 const App: React.FC = () => {
@@ -17,6 +18,15 @@ const App: React.FC = () => {
   });
 
   const [targetRole, setTargetRole] = useState<UserRole>(null);
+  const [pathname, setPathname] = useState(() =>
+    typeof window !== 'undefined' ? window.location.pathname : ''
+  );
+
+  useEffect(() => {
+    const onPopState = () => setPathname(window.location.pathname);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   // Check for stored session on mount
   useEffect(() => {
@@ -42,8 +52,11 @@ const App: React.FC = () => {
     localStorage.removeItem('sf_auth');
   };
 
-  // Main UI routing
+  // Main UI routing (direct-access lead board has no auth)
   const renderContent = () => {
+    if (pathname === '/lead-board' || targetRole === 'LEADERBOARD') {
+      return <LeadBoardPage />;
+    }
     if (auth.authenticated) {
       switch (auth.role) {
         case 'ADMIN': return <AdminPortal user={auth.user} onLogout={handleLogout} />;
