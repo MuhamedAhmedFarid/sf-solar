@@ -1,0 +1,5 @@
+{
+  "name": "Sunflower LLC Portal Ecosystem",
+  "description": "A comprehensive enterprise portal for Sunflower LLC managing Admin, Payroll, Recruitment, Sales Reps, and Client relations with integrated Supabase backend.",
+  "requestFramePermissions": []
+}
